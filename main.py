@@ -130,9 +130,12 @@ def main():
           if score > HIGHSCORE:
             HIGHSCORE = score
           if score > HIGHSCOREFROMFILE:
-            bb=open("hscore.txt","w+")
+            bb=open("hscore.txt","w")
             bb.write(str(score))
             bb.close()
+            aa=open("hscore.txt","r")
+            HIGHSCOREFROMFILE = int(aa.read())
+            aa.close()
       clock.tick(60) 
       score += 1
       keys_pressed = pygame.key.get_pressed() #move more smoothly
