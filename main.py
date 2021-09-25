@@ -78,27 +78,19 @@ def check_collision(character, asteroidlist):
     if character.colliderect(a):
       pygame.event.post(pygame.event.Event(HITASTEROID))
 
-def lost():
-  running = True
-  while running:
-    lost_words = FONT.render("YOU LOST", 1, (0,0,0))
-    replay_words = FONT.render("Press SPACE to replay", 1, (0,0,0))
-    lost_box = pygame.Rect(WIDTH / 2 - 250, HEIGHT / 2 - 150, 500, 300) #created rectangle in middle
-    pygame.draw.rect(win, (255, 255, 255), lost_box)
-    win.blit(lost_words, (WIDTH/2 - lost_words.get_width()/2, HEIGHT/2 - lost_words.get_height()/2)) #puts words in center
-    win.blit(replay_words, (WIDTH/2 - replay_words.get_width()/2 , HEIGHT/2 - replay_words.get_height()/2 + lost_words.get_height()))
+def lost(HIGHSCOREFROMFILE):
+  lost_words = FONT.render("YOU LOST", 1, (0,0,0))
+  replay_words = FONT.render("Press SPACE to replay", 1, (0,0,0))
+  score_string = FONT.render("HIGH SCORE: " + str(HIGHSCOREFROMFILE), 1, (0,0,0))
 
-    #display score later
-    #store score as high score if greater than previous
-    #^ or we can put this before lost() is called
-    
-    for event in pygame.event.get():
-      if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_SPACE:
-          running = False
-          main()
-    
-    pygame.display.update()
+  lost_box = pygame.Rect(WIDTH / 2 - 250, HEIGHT / 2 - 150, 500, 300) #created rectangle in middle
+  pygame.draw.rect(win, (255, 255, 255), lost_box)
+
+  win.blit(lost_words, (WIDTH/2 - lost_words.get_width()/2, HEIGHT/2 - 3*replay_words.get_height()/2))
+  win.blit(replay_words, (WIDTH/2 - replay_words.get_width()/2, HEIGHT/2 - replay_words.get_height()/2))
+  win.blit(score_string, (WIDTH/2 - score_string.get_width()/2, HEIGHT/2 + replay_words.get_height()/2))
+
+  pygame.display.update()
 
 def main():
   score = 0
@@ -116,10 +108,13 @@ def main():
 
   #asteroid = pygame.Rect(WIDTH*0.2, HEIGHT * 0.5, )
     while running:
-       
+      
+      clock.tick(60) 
+      score += 1
       f=open("hscore.txt")
       HIGHSCOREFROMFILE = int(f.read())
       f.close()
+
       for event in pygame.event.get():
         if event.type == pygame.QUIT: #when u press x button
           running = False
@@ -136,8 +131,8 @@ def main():
             aa=open("hscore.txt","r")
             HIGHSCOREFROMFILE = int(aa.read())
             aa.close()
-      clock.tick(60) 
-      score += 1
+        
+      
       keys_pressed = pygame.key.get_pressed() #move more smoothly
       move(mc, keys_pressed)
       move_asteroids(asteroidlist)
@@ -145,27 +140,12 @@ def main():
       draw_window(mc, asteroidlist, score)
       
     while not running:
-      lost_words = FONT.render("YOU LOST", 1, (0,0,0))
-      replay_words = FONT.render("Press SPACE to replay", 1, (0,0,0))
-      score_string = FONT.render("HIGH SCORE: " + str(HIGHSCOREFROMFILE), 1, (0,0,0))
-
-      lost_box = pygame.Rect(WIDTH / 2 - 250, HEIGHT / 2 - 150, 500, 300) #created rectangle in middle
-      pygame.draw.rect(win, (255, 255, 255), lost_box)
-
-      win.blit(lost_words, (WIDTH/2 - lost_words.get_width()/2, HEIGHT/2 - lost_words.get_height()/2)) #puts words in center
-      win.blit(replay_words, (WIDTH/2 - replay_words.get_width()/2 , HEIGHT/2 - replay_words.get_height()/2 + lost_words.get_height()))
-      win.blit(score_string, (WIDTH/2 - score_string.get_width()/2 , HEIGHT/2 - replay_words.get_height()/2 + lost_words.get_height() + score_string.get_height()))
-
-    #display score later
-    #store score as high score if greater than previous
-    #^ or we can put this before lost() is called
-    
+      lost(HIGHSCOREFROMFILE)
       for event in pygame.event.get():
-       if event.type == pygame.KEYDOWN:
-         if event.key == pygame.K_SPACE:
-           running = True
-           score = 0
-      pygame.display.update()
+        if event.type == pygame.KEYDOWN:
+          if event.key == pygame.K_SPACE:
+            running = True
+            score = 0
 
   pygame.quit()
 
