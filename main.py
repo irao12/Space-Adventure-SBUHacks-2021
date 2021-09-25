@@ -1,6 +1,9 @@
 import pygame
 import os
 import random
+import sys
+
+#DISPLAYSURF = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
 pygame.init()
 pygame.font.init()
@@ -21,7 +24,7 @@ ADDASTEROID = pygame.USEREVENT + 1
 HITASTEROID = pygame.USEREVENT + 2
 
 win = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("SPACE INVADERS RIP OFF")#who did this^  lmao  
+pygame.display.set_caption("SPACE ADVENTURE")
 from pygame.locals import(
   K_UP,#keys
   K_DOWN,
@@ -65,7 +68,6 @@ def create_asteroids(asteroidlist):
       asteroid = pygame.Rect(WIDTH, y, ASTEROID_WIDTH, ASTEROID_HEIGHT)
       asteroidlist.append(asteroid)
 
-
 def move_asteroids(asteroidlist):
   for a in asteroidlist:
     a.x -= 10
@@ -96,9 +98,14 @@ def draw_menu():
   started = False
 
   while not started:
-    win.fill((255,255,255)) #fills scren with white
-    MENU_MESSAGE = FONT.render("Press the spacebar to start!", 1, (0,0,0))
-    win.blit(MENU_MESSAGE, (WIDTH/2 - MENU_MESSAGE.get_width()/2, HEIGHT/2 - MENU_MESSAGE.get_height()/2))
+    win.blit(BACKGROUND, (0,0))
+    #win.fill((255,255,255)) #fills scren with white
+
+    title_text = FONT.render("SPACE ADVENTURE", 1, (255, 255,255))
+    win.blit(title_text, (WIDTH/2 - title_text.get_width()/2, HEIGHT/2 - title_text.get_height()))
+
+    menu_message = FONT.render("Press the spacebar to start!", 1, (255, 255, 255))
+    win.blit(menu_message, (WIDTH/2 - menu_message.get_width()/2, HEIGHT/2))
     
     for event in pygame.event.get():
       if event.type == pygame.KEYDOWN:
@@ -135,7 +142,7 @@ def main():
 
       for event in pygame.event.get():
         if event.type == pygame.QUIT: #when u press x button
-          running = False
+          pygame.display.quit(), sys.exit()
         if event.type == ADDASTEROID and random.random() < 0.1:
           create_asteroids(asteroidlist)
         if event.type == HITASTEROID:
