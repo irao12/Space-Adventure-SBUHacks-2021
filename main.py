@@ -31,7 +31,7 @@ from pygame.locals import(
 )
 
 #function for drawing
-def draw_window(character, asteroidlist):
+def draw_window(character, asteroidlist, score):
   win.blit(BACKGROUND, (0,0)) #image, coords it starts at
   #win.fill((0, 0, 0)) #fills screen with black
   #pygame.draw.rect(win, (0, 0, 255), character)#draws it on the screen
@@ -39,6 +39,9 @@ def draw_window(character, asteroidlist):
   
   for thing in asteroidlist:
       win.blit(ASTEROID, (thing.x, thing.y))
+
+  score_string = FONT.render("Score: " + str(score), 1, (255,255,255))
+  win.blit(score_string, (0,0))
       
   pygame.display.update() #updates the window
 
@@ -98,7 +101,11 @@ def lost():
     pygame.display.update()
 
 def main():
+  score = 0
+  HIGHSCORE = score
+  
   while True:
+    
     clock = pygame.time.Clock()
     pygame.time.set_timer(ADDASTEROID, 20)
     
@@ -109,7 +116,10 @@ def main():
 
   #asteroid = pygame.Rect(WIDTH*0.2, HEIGHT * 0.5, )
     while running:
-      
+       
+      f=open("hscore.txt")
+      HIGHSCOREFROMFILE = int(f.read())
+      f.close()
       for event in pygame.event.get():
         if event.type == pygame.QUIT: #when u press x button
           running = False
@@ -117,23 +127,31 @@ def main():
           create_asteroids(asteroidlist)
         if event.type == HITASTEROID:
           running = False
-    
-          
+          if score > HIGHSCORE:
+            HIGHSCORE = score
+          if score > HIGHSCOREFROMFILE:
+            bb=open("hscore.txt","w+")
+            bb.write(str(score))
+            bb.close()
       clock.tick(60) 
-      
+      score += 1
       keys_pressed = pygame.key.get_pressed() #move more smoothly
       move(mc, keys_pressed)
       move_asteroids(asteroidlist)
       check_collision(mc, asteroidlist)
-      draw_window(mc, asteroidlist)
+      draw_window(mc, asteroidlist, score)
       
     while not running:
       lost_words = FONT.render("YOU LOST", 1, (0,0,0))
       replay_words = FONT.render("Press SPACE to replay", 1, (0,0,0))
+      score_string = FONT.render("HIGH SCORE: " + str(HIGHSCOREFROMFILE), 1, (0,0,0))
+
       lost_box = pygame.Rect(WIDTH / 2 - 250, HEIGHT / 2 - 150, 500, 300) #created rectangle in middle
       pygame.draw.rect(win, (255, 255, 255), lost_box)
+
       win.blit(lost_words, (WIDTH/2 - lost_words.get_width()/2, HEIGHT/2 - lost_words.get_height()/2)) #puts words in center
       win.blit(replay_words, (WIDTH/2 - replay_words.get_width()/2 , HEIGHT/2 - replay_words.get_height()/2 + lost_words.get_height()))
+      win.blit(score_string, (WIDTH/2 - score_string.get_width()/2 , HEIGHT/2 - replay_words.get_height()/2 + lost_words.get_height() + score_string.get_height()))
 
     #display score later
     #store score as high score if greater than previous
@@ -143,6 +161,7 @@ def main():
        if event.type == pygame.KEYDOWN:
          if event.key == pygame.K_SPACE:
            running = True
+           score = 0
       pygame.display.update()
 
   pygame.quit()
