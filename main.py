@@ -92,7 +92,25 @@ def lost(HIGHSCOREFROMFILE):
 
   pygame.display.update()
 
+def draw_menu():
+  started = False
+
+  while not started:
+    win.fill((255,255,255)) #fills scren with white
+    MENU_MESSAGE = FONT.render("Press the spacebar to start!", 1, (0,0,0))
+    win.blit(MENU_MESSAGE, (WIDTH/2 - MENU_MESSAGE.get_width()/2, HEIGHT/2 - MENU_MESSAGE.get_height()/2))
+    
+    for event in pygame.event.get():
+      if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_SPACE:
+          started = True
+            
+    pygame.display.update() #updates the window
+  
+
 def main():
+  draw_menu()
+
   score = 0
   HIGHSCORE = score
   
