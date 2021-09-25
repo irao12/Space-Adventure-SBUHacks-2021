@@ -8,7 +8,6 @@ CHAR_WIDTH, CHAR_HEIGHT = 50, 50
 ASTEROID_WIDTH, ASTEROID_HEIGHT = 50, 50
 CHAR_SPEED = 20
 
-
 BACKGROUND = pygame.image.load(os.path.join("pictures", "spaceback.png"))#image for background
 SHIP = pygame.transform.scale(pygame.image.load(os.path.join("pictures","spaceship.png")), (CHAR_WIDTH, CHAR_HEIGHT))#image for main character
 ASTEROID = pygame.transform.scale(pygame.image.load(os.path.join("pictures","asteroid.png")),(CHAR_WIDTH,CHAR_HEIGHT))#image for asteroid
