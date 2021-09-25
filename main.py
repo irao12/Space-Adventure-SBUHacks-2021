@@ -3,6 +3,11 @@ import os
 import random
 
 pygame.init()
+pygame.font.init()
+
+FONT = pygame.font.SysFont("arial", 30)
+FONT2 = pygame.font.SysFont("arial", 15)
+
 WIDTH, HEIGHT = 1000, 600
 CHAR_WIDTH, CHAR_HEIGHT = 50, 50
 ASTEROID_WIDTH, ASTEROID_HEIGHT = 50, 50
@@ -49,7 +54,7 @@ def move(character, keys_pressed):
     character.x += CHAR_SPEED
 
 #max 12 asteroids
-def create_asteroids(asteroidlist):
+def create_asteroids(asteroidlist): 
   for count in range (12):
     y = count * ASTEROID_HEIGHT
     random_num = random.random()
@@ -64,11 +69,23 @@ def move_asteroids(asteroidlist):
     if a.x + ASTEROID_WIDTH < 0:
       asteroidlist.remove(a)
       del a
-  
 
-#def check_collision(character, asteroidlist):
-  #if character.x + CHAR_WIDTH >= a?.x and character.y
-  #
+def check_collision(character, asteroidlist):
+  for a in asteroidlist:
+    if character.colliderect(a):
+      pygame.event.post(pygame.event.Event(HITASTEROID))
+
+def lost():
+  running = True
+  while running:
+    lost_words = FONT.render("YOU LOST", 1, (0,0,0))
+    lost_box = pygame.Rect(WIDTH / 2 - 250, HEIGHT / 2 - 150, 500, 300) #created rectangle in middle
+    pygame.draw.rect(win, (255, 255, 255), lost_box)
+    win.blit(lost_words, (WIDTH/2 - lost_words.get_width()/2, HEIGHT/2 - lost_words.get_height()/2)) #puts words in center
+    #display score later
+    #store score as high score if greater than previous
+    #^ or we can put this before lost() is called
+    pygame.display.update()
 
 def main():
   clock = pygame.time.Clock()
@@ -87,13 +104,19 @@ def main():
         running = False
       if event.type == ADDASTEROID and random.random() < 0.1:
         create_asteroids(asteroidlist)
+      if event.type == HITASTEROID:
+        running = False
+        lost()
+        
         
     clock.tick(60) 
     
     keys_pressed = pygame.key.get_pressed() #move more smoothly
     move(mc, keys_pressed)
     move_asteroids(asteroidlist)
+    check_collision(mc, asteroidlist)
     draw_window(mc, asteroidlist)
+
   pygame.quit()
 
 if __name__ == '__main__': #checks if name is main
