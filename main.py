@@ -13,6 +13,7 @@ SHIP = pygame.transform.scale(pygame.image.load(os.path.join("pictures","spacesh
 ASTEROID = pygame.transform.scale(pygame.image.load(os.path.join("pictures","asteroid.png")),(CHAR_WIDTH,CHAR_HEIGHT))#image for asteroid
 
 ADDASTEROID = pygame.USEREVENT + 1
+HITASTEROID = pygame.USEREVENT + 2
 
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("SPACE INVADERS RIP OFF")#who did this^  lmao  
@@ -56,15 +57,17 @@ def create_asteroids(asteroidlist):
       asteroid = pygame.Rect(WIDTH, y, ASTEROID_WIDTH, ASTEROID_HEIGHT)
       asteroidlist.append(asteroid)
 
-  #each iteration: random int determines whether or not an asteroid is #spawned, then y increases (+=50 but we should probably add space in #between so more than 50, or have less than 12)
-  #at least one space must be empty so we could have a boolean
 
 def move_asteroids(asteroidlist):
   for a in asteroidlist:
     a.x -= 10
+    if a.x + ASTEROID_WIDTH < 0:
+      asteroidlist.remove(a)
+      del a
   
 
-#def check_collision()
+#def check_collision(character, asteroidlist):
+  #if character.x + CHAR_WIDTH >= a?.x and character.y
   #
 
 def main():
@@ -91,7 +94,6 @@ def main():
     move(mc, keys_pressed)
     move_asteroids(asteroidlist)
     draw_window(mc, asteroidlist)
-  
   pygame.quit()
 
 if __name__ == '__main__': #checks if name is main
