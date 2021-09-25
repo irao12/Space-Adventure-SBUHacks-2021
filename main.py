@@ -6,7 +6,7 @@ pygame.init()
 pygame.font.init()
 
 FONT = pygame.font.SysFont("arial", 30)
-FONT2 = pygame.font.SysFont("arial", 15)
+FONT2 = pygame.font.SysFont("arial", 10)
 
 WIDTH, HEIGHT = 1000, 600
 CHAR_WIDTH, CHAR_HEIGHT = 50, 50
@@ -79,43 +79,71 @@ def lost():
   running = True
   while running:
     lost_words = FONT.render("YOU LOST", 1, (0,0,0))
+    replay_words = FONT.render("Press SPACE to replay", 1, (0,0,0))
     lost_box = pygame.Rect(WIDTH / 2 - 250, HEIGHT / 2 - 150, 500, 300) #created rectangle in middle
     pygame.draw.rect(win, (255, 255, 255), lost_box)
     win.blit(lost_words, (WIDTH/2 - lost_words.get_width()/2, HEIGHT/2 - lost_words.get_height()/2)) #puts words in center
+    win.blit(replay_words, (WIDTH/2 - replay_words.get_width()/2 , HEIGHT/2 - replay_words.get_height()/2 + lost_words.get_height()))
+
     #display score later
     #store score as high score if greater than previous
     #^ or we can put this before lost() is called
+    
+    for event in pygame.event.get():
+      if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_SPACE:
+          running = False
+          main()
+    
     pygame.display.update()
 
 def main():
-  clock = pygame.time.Clock()
-  pygame.time.set_timer(ADDASTEROID, 20)
-  
-  running = True
-  mc = pygame.Rect(WIDTH*0.2, HEIGHT * 0.5, CHAR_WIDTH, CHAR_HEIGHT)#makes a character
-  #mc.image = pygame.Surface[CHAR_WIDTH,CHAR_HEIGHT]
-  asteroidlist = []
+  while True:
+    clock = pygame.time.Clock()
+    pygame.time.set_timer(ADDASTEROID, 20)
+    
+    running = True
+    mc = pygame.Rect(WIDTH*0.2, HEIGHT * 0.5, CHAR_WIDTH, CHAR_HEIGHT)#makes a character
+    #mc.image = pygame.Surface[CHAR_WIDTH,CHAR_HEIGHT]
+    asteroidlist = []
 
   #asteroid = pygame.Rect(WIDTH*0.2, HEIGHT * 0.5, )
-  while running:
+    while running:
+      
+      for event in pygame.event.get():
+        if event.type == pygame.QUIT: #when u press x button
+          running = False
+        if event.type == ADDASTEROID and random.random() < 0.1:
+          create_asteroids(asteroidlist)
+        if event.type == HITASTEROID:
+          running = False
     
-    for event in pygame.event.get():
-      if event.type == pygame.QUIT: #when u press x button
-        running = False
-      if event.type == ADDASTEROID and random.random() < 0.1:
-        create_asteroids(asteroidlist)
-      if event.type == HITASTEROID:
-        running = False
-        lost()
-        
-        
-    clock.tick(60) 
+          
+      clock.tick(60) 
+      
+      keys_pressed = pygame.key.get_pressed() #move more smoothly
+      move(mc, keys_pressed)
+      move_asteroids(asteroidlist)
+      check_collision(mc, asteroidlist)
+      draw_window(mc, asteroidlist)
+      
+    while not running:
+      lost_words = FONT.render("YOU LOST", 1, (0,0,0))
+      replay_words = FONT.render("Press SPACE to replay", 1, (0,0,0))
+      lost_box = pygame.Rect(WIDTH / 2 - 250, HEIGHT / 2 - 150, 500, 300) #created rectangle in middle
+      pygame.draw.rect(win, (255, 255, 255), lost_box)
+      win.blit(lost_words, (WIDTH/2 - lost_words.get_width()/2, HEIGHT/2 - lost_words.get_height()/2)) #puts words in center
+      win.blit(replay_words, (WIDTH/2 - replay_words.get_width()/2 , HEIGHT/2 - replay_words.get_height()/2 + lost_words.get_height()))
+
+    #display score later
+    #store score as high score if greater than previous
+    #^ or we can put this before lost() is called
     
-    keys_pressed = pygame.key.get_pressed() #move more smoothly
-    move(mc, keys_pressed)
-    move_asteroids(asteroidlist)
-    check_collision(mc, asteroidlist)
-    draw_window(mc, asteroidlist)
+      for event in pygame.event.get():
+       if event.type == pygame.KEYDOWN:
+         if event.key == pygame.K_SPACE:
+           running = True
+      pygame.display.update()
 
   pygame.quit()
 
